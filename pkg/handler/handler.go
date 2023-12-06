@@ -3,10 +3,22 @@ package handler
 // Пакет handler предоставляет обработчики запросов и метод для инициализации маршрутов веб-приложения.
 
 // Импортируем необходимые пакеты.
-import "github.com/gin-gonic/gin" // Импортируем пакет gin для работы с HTTP-запросами и ответами.
+import (
+	"github.com/ANkulagin/todo-app/pkg/service"
+	"github.com/gin-gonic/gin"
+) // Импортируем пакет gin для работы с HTTP-запросами и ответами.
 
-// Структура Handler представляет обработчик запросов.
+// Структура Handler представляет собой обработчик запросов.
+
+// Структура Handler содержит указатель на сервисы приложения.
 type Handler struct {
+	services *service.Service
+}
+
+// Метод NewHandler создает новый экземпляр структуры Handler с переданными сервисами
+
+func NewHandler(services *service.Service) *Handler {
+	return &Handler{services: services}
 }
 
 // Метод InitRoutes инициализирует маршруты веб-приложения и возвращает движок gin.Engine.
