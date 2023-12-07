@@ -1,6 +1,8 @@
 // Пакет repository определяет интерфейсы для взаимодействия с хранилищем данных.
 package repository
 
+import "github.com/jmoiron/sqlx"
+
 // Интерфейс Authorization определяет методы для работы с авторизацией.
 type Authorization interface {
 	// Добавьте методы для реализации логики авторизации.
@@ -24,6 +26,6 @@ type Repository struct {
 }
 
 // Метод NewRepository создает новый экземпляр структуры Repository.
-func NewRepository() *Repository {
+func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{}
 }
