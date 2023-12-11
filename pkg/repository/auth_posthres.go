@@ -20,7 +20,6 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 // CreateUser создает нового пользователя в базе данных и возвращает его идентификатор.
 func (r *AuthPostgres) CreateUser(user todo.User) (int, error) {
 	var id int
-
 	// Формируем SQL-запрос для вставки нового пользователя и получения его идентификатора.
 	query := fmt.Sprintf("INSERT INTO %s (name, username, password_hash) values ($1, $2, $3) RETURNING id", usersTable)
 
