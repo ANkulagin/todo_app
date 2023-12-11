@@ -24,7 +24,6 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 func (s *AuthService) CreateUser(user todo.User) (int, error) {
 	// Хешируем пароль пользователя перед сохранением в базу данных.
 	user.Password = generatePasswordHash(user.Password)
-
 	// Вызываем метод CreateUser у репозитория для сохранения пользователя в базе данных.
 	return s.repo.CreateUser(user)
 }

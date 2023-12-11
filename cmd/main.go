@@ -17,7 +17,6 @@ import (
 func main() {
 	// Устанавливаем форматтер логов в JSON.
 	logrus.SetFormatter(new(logrus.JSONFormatter))
-
 	// Инициализируем конфигурацию приложения.
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("ошибка при инициализации конфигурации: %s", err.Error())

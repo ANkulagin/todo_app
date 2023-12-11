@@ -13,7 +13,6 @@ import (
 func (h *Handler) signUp(c *gin.Context) {
 	// Инициализируем переменную input для хранения данных пользователя.
 	var input todo.User
-
 	// Привязываем JSON-данные запроса к переменной input.
 	if err := c.BindJSON(&input); err != nil {
 		// Если возникает ошибка при привязке данных, возвращаем ошибку BadRequest.
