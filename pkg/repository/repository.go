@@ -9,6 +9,7 @@ import (
 // Интерфейс Authorization предоставляет методы для работы с авторизацией пользователей.
 type Authorization interface {
 	CreateUser(user todo.User) (int, error)
+	GetUser(username, password string) (todo.User, error)
 }
 
 // Интерфейс TodoList предоставляет методы для работы со списками дел.
