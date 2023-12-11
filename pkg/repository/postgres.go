@@ -6,7 +6,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// Константы, представляющие названия таблиц в базе данных.
+// Константы, представляющие имена таблиц в базе данных.
 const (
 	usersTable      = "users"
 	todoListsTable  = "todo_lists"
@@ -15,7 +15,7 @@ const (
 	listsItemsTable = "lists_items"
 )
 
-// Config представляет конфигурацию для подключения к базе данных.
+// Структура Config представляет конфигурацию подключения к базе данных PostgreSQL.
 type Config struct {
 	Host     string
 	Port     string
@@ -25,21 +25,21 @@ type Config struct {
 	SSLMode  string
 }
 
-// NewPostgresDB создает и возвращает новый экземпляр sqlx.DB для подключения к базе данных PostgreSQL.
+// NewPostgresDB создает новое подключение к базе данных PostgreSQL на основе переданной конфигурации.
 func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
-	// Открываем соединение с базой данных, используя параметры конфигурации.
+	// Открываем новое подключение к базе данных PostgreSQL, используя параметры из конфигурации.
 	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
 	if err != nil {
 		return nil, err
 	}
 
-	// Проверяем соединение с базой данных.
+	// Проверяем, что подключение к базе данных установлено успешно.
 	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}
 
-	// Возвращаем экземпляр sqlx.DB и ошибку (если есть).
+	// Возвращаем созданное подключение к базе данных.
 	return db, nil
 }

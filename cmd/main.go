@@ -1,8 +1,9 @@
+// Определяем пакет main, который является точкой входа в приложение.
 package main
 
+// Импортируем необходимые пакеты.
 import (
-	// Импортируем пакеты из сторонних библиотек и локальных пакетов.
-	todo_app "github.com/ANkulagin/todo-app"
+	"github.com/ANkulagin/todo-app"
 	"github.com/ANkulagin/todo-app/pkg/handler"
 	"github.com/ANkulagin/todo-app/pkg/repository"
 	"github.com/ANkulagin/todo-app/pkg/service"
@@ -12,50 +13,51 @@ import (
 	"os"
 )
 
-// Функция main инициализирует репозиторий, сервисы и обработчики, а затем запускает HTTP-сервер.
+// Функция main - точка входа в приложение.
 func main() {
+	// Устанавливаем форматтер логов в JSON.
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 
-	// Инициализация конфигурации приложения.
+	// Инициализируем конфигурацию приложения.
 	if err := initConfig(); err != nil {
-		logrus.Fatalf("error initconfig: %s", err.Error())
+		logrus.Fatalf("ошибка при инициализации конфигурации: %s", err.Error())
 	}
 
-	// Загрузка переменных окружения из файла .env.
+	// Загружаем переменные окружения из файла .env.
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("error loading env variables: %s", err.Error())
+		logrus.Fatalf("ошибка при загрузке переменных окружения: %s", err.Error())
 	}
 
-	// Создаем экземпляр репозитория, используя конфигурацию из файла и переменные окружения.
+	// Инициализируем подключение к базе данных PostgreSQL.
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
-		Password: os.Getenv("DB_PASSWORD"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
+		Password: os.Getenv("DB_PASSWORD"),
 	})
 	if err != nil {
-		logrus.Fatalf("failed to initialize db: %s", err.Error())
+		logrus.Fatalf("ошибка при инициализации базы данных: %s", err.Error())
 	}
+
+	// Создаем репозиторий для взаимодействия с базой данных.
 	repos := repository.NewRepository(db)
 
-	// Создаем экземпляр сервиса, передавая ему репозиторий.
+	// Создаем сервис для обработки бизнес-логики.
 	services := service.NewService(repos)
 
-	// Создаем экземпляр обработчика, передавая ему сервисы.
+	// Создаем обработчик HTTP-запросов.
 	handlers := handler.NewHandler(services)
 
-	// Создаем экземпляр HTTP-сервера.
-	srv := new(todo_app.Server)
-
-	// Запускаем сервер на порту из конфигурации с зарегистрированными маршрутами из обработчика.
+	// Создаем экземпляр сервера TODO и запускаем его.
+	srv := new(todo.Server)
 	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("error occurred while running http server: %s", err.Error())
+		logrus.Fatalf("ошибка при запуске HTTP-сервера: %s", err.Error())
 	}
 }
 
-// initConfig инициализирует конфигурацию, читая файл конфигурации из директории configs.
+// Функция initConfig инициализирует конфигурацию приложения, используя файл "config.yaml" в папке "configs".
 func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")

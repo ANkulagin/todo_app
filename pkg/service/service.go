@@ -4,33 +4,37 @@ package service
 
 // Импортируем пакет repository для использования интерфейсов репозитория.
 import (
-	todo_app "github.com/ANkulagin/todo-app"
+	"github.com/ANkulagin/todo-app"
 	"github.com/ANkulagin/todo-app/pkg/repository"
 )
 
-// Интерфейс Authorization определяет методы для работы с авторизацией.
+// Интерфейс Authorization предоставляет методы для работы с авторизацией пользователей.
 type Authorization interface {
-	CreateUser(user todo_app.User) (int, error)
+	CreateUser(user todo.User) (int, error)
 }
 
-// Интерфейс TodoList определяет методы для работы со списками задач.
+// Интерфейс TodoList предоставляет методы для работы со списками дел.
 type TodoList interface {
-	// Добавьте методы для реализации логики работы со списками задач.
+	// Здесь можно добавить методы для работы со списками дел, такие как создание, получение, обновление, удаление и другие.
 }
 
-// Интерфейс TodoItem определяет методы для работы с отдельными задачами.
+// Интерфейс TodoItem предоставляет методы для работы с элементами в списках дел.
 type TodoItem interface {
-	// Добавьте методы для реализации логики работы с отдельными задачами.
+	// Здесь можно добавить методы для работы с элементами в списках дел, такие как создание, получение, обновление, удаление и другие.
 }
 
-// Структура Service представляет собой общий сервис, объединяющий интерфейсы.
+// Структура Service объединяет интерфейсы для работы с базой данных в единую сущность.
 type Service struct {
 	Authorization
 	TodoList
 	TodoItem
 }
 
-// Метод NewService создает новый экземпляр структуры Service, используя переданный репозиторий.
+// NewService создает новый экземпляр Service, используя переданный репозиторий.
 func NewService(repos *repository.Repository) *Service {
-	return &Service{}
+	// Инициализируем Service с реализацией интерфейса Authorization для работы с пользователями в базе данных.
+	return &Service{
+		Authorization: NewAuthService(repos.Authorization),
+		// Здесь можно добавить инициализацию других интерфейсов, если они будут реализованы.
+	}
 }
