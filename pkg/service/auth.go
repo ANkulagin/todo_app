@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"github.com/ANkulagin/todo-app"
 	"github.com/ANkulagin/todo-app/pkg/repository"
@@ -50,6 +51,31 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		user.Id,
 	})
 	return token.SignedString([]byte(signingKey))
+}
+func (s *AuthService) ParseToken(accessToken string) (int, error) {
+	// Пытаемся разобрать токен с использованием метода ParseWithClaims из библиотеки jwt
+	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		// Проверяем, что метод подписи токена является HMAC
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+
+		// Возвращаем ключ подписи для проверки подписи токена
+		return []byte(signingKey), nil
+	})
+	if err != nil {
+		// Если произошла ошибка при разборе токена, возвращаем ошибку
+		return 0, err
+	}
+
+	// Проверяем, что утверждения токена имеют тип *tokenClaims
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return 0, errors.New("token claims are not of type *tokenClaims")
+	}
+
+	// Возвращаем идентификатор пользователя из утверждений токена
+	return claims.UserId, nil
 }
 
 // generatePasswordHash хеширует переданный пароль, используя sha1 и добавляя к нему соль.
