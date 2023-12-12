@@ -7,8 +7,11 @@ import (
 )
 
 // Структура error представляет JSON-структуру для сообщения об ошибке.
-type error struct {
+type errorResponse struct {
 	Message string `json:"message"`
+}
+type statusResponse struct {
+	Status string `json:"status"`
 }
 
 // Функция newErrorResponse создает и возвращает JSON-ответ с сообщением об ошибке.
@@ -18,5 +21,5 @@ func newErrorResponse(c *gin.Context, statusCode int, message string) {
 	logrus.Error(message)
 
 	// Отправляем JSON-ответ с сообщением об ошибке и указанным HTTP-статусом.
-	c.AbortWithStatusJSON(statusCode, error{message})
+	c.AbortWithStatusJSON(statusCode, errorResponse{message})
 }
