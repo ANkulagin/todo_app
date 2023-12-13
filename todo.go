@@ -2,6 +2,8 @@ package todo
 
 // Пакет todo_app определяет структуры данных, представляющие сущности в приложении для управления задачами.
 
+import "errors"
+
 // Структура TodoList представляет собой модель задачи в списке.
 type TodoList struct {
 	Id          int    `json:"id" db:"id"`                          // Идентификатор списка задач.
@@ -29,4 +31,16 @@ type ListsItem struct {
 	Id     int // Идентификатор связи.
 	ListId int // Идентификатор списка задач.
 	ItemId int // Идентификатор задачи в списке.
+}
+type UpdateListInput struct {
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+}
+
+func (i UpdateListInput) Validate() error {
+	if i.Title == nil && i.Description == nil {
+		return errors.New("update structure has no values")
+	}
+
+	return nil
 }
